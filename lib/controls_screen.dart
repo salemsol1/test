@@ -143,7 +143,7 @@ class ControlsScreen extends StatelessWidget {
                 ),
                 // Speed Slider 
                 Padding (
-                  padding: EdgeInsets.only(top: screenHeight * 0.08, left: 63),
+                  padding: EdgeInsets.only(top: screenHeight * 0.08, left: screenWidth * 0.02),
                   child: 
                     SizedBox (
                       width: screenWidth * 0.3,

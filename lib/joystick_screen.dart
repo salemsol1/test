@@ -1,14 +1,17 @@
 // joystick_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:robo_app/config.dart';
 import 'package:robo_app/main.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:robo_app/misc_controls.dart';
 import 'package:robo_app/speed_slider.dart'; // Import joystick package
 
-class JoystickScreen extends StatelessWidget {
-  const JoystickScreen({super.key});
-
+class JoystickScreen extends StatefulWidget {
+    @override
+  _JoystickScreenState createState() => _JoystickScreenState();
+}
+class _JoystickScreenState extends State<JoystickScreen> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([
@@ -88,7 +91,7 @@ class JoystickScreen extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: 15, left: screenWidth / 2 - 150),
+              padding: EdgeInsets.only(top: 5, left: screenWidth / 2 - 140),
                 child: SizedBox(
                   width: screenWidth * 0.3,
                   child: ValueSlider(),

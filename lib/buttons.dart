@@ -3,6 +3,12 @@ import 'dart:async'; // Import Timer
 import 'package:http/http.dart' as http;
 import 'config.dart';
 
+final ValueNotifier<bool> isUpPressed = ValueNotifier<bool>(false);
+final ValueNotifier<bool> isDownPressed = ValueNotifier<bool>(false);
+final ValueNotifier<bool> isLeftPressed = ValueNotifier<bool>(false);
+final ValueNotifier<bool> isRightPressed = ValueNotifier<bool>(false);
+String currCmd = '';
+
 class CustomGestureButton extends StatefulWidget {
   final String cmd;
   final Color color;
@@ -31,20 +37,53 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
     buttonColor = widget.color;
   }
 
+  String getCurrCmd(String cmd) {
+    if (isUpPressed.value && isLeftPressed.value) {
+      return 'G';
+    }
+    if (isUpPressed.value && isRightPressed.value) {
+      return 'I';
+    }
+    if (isDownPressed.value && isLeftPressed.value) {
+      return 'H';
+    }
+    if (isDownPressed.value && isRightPressed.value) {
+      return 'J';
+    }
+    return cmd;
+  }
+
+  void setPressedState(String cmd, bool val) {
+    if (cmd == 'F') {
+      isUpPressed.value = val;
+    } else if (cmd == 'B') {
+      isDownPressed.value = val;
+    } else if (cmd == 'L') {
+      isLeftPressed.value = val;
+    } else if (cmd == 'R') {
+      isRightPressed.value = val;
+    }
+  }
+
+  Future<void> _setPressedState(String cmd, bool val) async {
+    setPressedState(cmd, val);
+  }
+  
   Future<void> _handleButtonClick(String cmd, bool sendStop, int retry) async {
     if (retry > 100) {
       return;
     }
+    String currCmd = getCurrCmd(cmd);
 
-    print('$cmd button clicked');
+    print('$currCmd button clicked');
     try {
-      final response = await http.get(Uri.parse('http://$roboIp:$roboPort/?State=$cmd'));
+      final response = await http.get(Uri.parse('http://$roboIp:$roboPort/?State=$currCmd'));
 
       if (response.statusCode == 200) {
         if (sendStop) {
           _handleButtonClick('S', false, 1);
         }
-        print('sent $cmd');
+        print('sent $currCmd');
       } else {
         _handleButtonClick(cmd, sendStop, retry++);
         print("Failed to send $cmd, try $retry");
@@ -55,9 +94,14 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
   }
     // Function to handle continuous action on long press
   void _startPressing(String cmd) {
+
+    setPressedState(cmd, true);
     _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      print('$cmd button long-pressed');
-      _handleButtonClick(cmd, false, 1);
+      currCmd = getCurrCmd(cmd);
+
+      print('$currCmd button long-pressed');
+      print(isUpPressed.value);
+      _handleButtonClick(currCmd, false, 1);
     });
   }
 
@@ -68,12 +112,15 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
       _timer = null;
     }
     _handleButtonClick('S', false, 1);
+    setPressedState(cmd, false);
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => _handleButtonClick(widget.cmd, widget.sendStop, 1),
+      onTapDown: (details) => _setPressedState(widget.cmd, true),
+      onTapUp: (details) => _setPressedState(widget.cmd, false),
       onLongPressStart: (_) => _startPressing(widget.cmd),
       onLongPressEnd: (_) => _stopPressing(widget.cmd),
       child: SizedBox(
