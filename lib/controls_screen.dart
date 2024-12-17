@@ -4,7 +4,7 @@ import 'package:robo_app/main.dart';
 import 'joystick_screen.dart'; // Import the second screen
 import 'buttons.dart'; // Import your custom widget
 import 'speed_slider.dart';
-import 'misc_controls.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
@@ -62,8 +62,15 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   }
 }
 
-class ControlsScreen extends StatelessWidget {
+class ControlsScreen extends StatefulWidget {
   const ControlsScreen({super.key});
+
+  @override
+  _ControlsScreen createState() => _ControlsScreen();
+}
+
+class _ControlsScreen extends State<ControlsScreen> {
+  bool _isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +121,6 @@ class ControlsScreen extends StatelessWidget {
                       child: 
                         CustomGestureButton(
                           cmd: 'F',
-                          color: Colors.blue,
                           icon: 'lib/icons/up.png',
                           sendStop: true,
                         ),
@@ -125,7 +131,6 @@ class ControlsScreen extends StatelessWidget {
                       child:
                         CustomGestureButton(
                           cmd: 'B',
-                          color: Colors.blue,
                           icon: 'lib/icons/down.png',
                           sendStop: true,
                         ),
@@ -135,15 +140,22 @@ class ControlsScreen extends StatelessWidget {
                 // Light switch button
                 Padding (
                   padding: EdgeInsets.only(top: 70, left: screenWidth * 0.05),
-                  child: 
-                    CustomControl(
-                      cmd: 'W',
-                      icon: 'lib/icons/car-light.png',
-                    ),
+                  child: Switch(
+                    value: _isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        _isSwitched = value;
+                      });
+                      print("Switch is ${_isSwitched ? "ON" : "OFF"}");
+                    },
+                    activeColor: Colors.green,
+                    inactiveThumbColor: Colors.red,
+                    inactiveTrackColor: Colors.grey,
+                  ),
                 ),
                 // Speed Slider 
                 Padding (
-                  padding: EdgeInsets.only(top: screenHeight * 0.08, left: 63),
+                  padding: EdgeInsets.only(top: screenHeight * 0.08, left: screenWidth * 0.02),
                   child: 
                     SizedBox (
                       width: screenWidth * 0.3,
@@ -156,9 +168,10 @@ class ControlsScreen extends StatelessWidget {
                     Padding (
                       padding: EdgeInsets.only(top: 20, left: screenHeight * 0.15),
                       child: 
-                        CustomControl(
+                        CustomGestureButton(
                           cmd: 'V',
                           icon: 'lib/icons/horn.png',
+                          sendStop: false,
                         ),
                     ),
                     // Left Right buttons
@@ -169,7 +182,6 @@ class ControlsScreen extends StatelessWidget {
                           child: 
                             CustomGestureButton(
                               cmd: 'L',
-                              color: Colors.blue,
                               icon: 'lib/icons/left.png',
                               sendStop: true,
                             ),
@@ -180,7 +192,6 @@ class ControlsScreen extends StatelessWidget {
                           child: 
                             CustomGestureButton(
                               cmd: 'R',
-                              color: Colors.blue,
                               icon: 'lib/icons/right.png',
                               sendStop: true,
                             ),
@@ -195,5 +206,5 @@ class ControlsScreen extends StatelessWidget {
         ),
       )
     );
-  }
+  }  
 }

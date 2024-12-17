@@ -45,10 +45,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _formKey = GlobalKey<FormState>(); // Key to manage form validation
-  final TextEditingController ip = TextEditingController();
-  final TextEditingController port = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
   final double screenHeight = MediaQuery.of(context).size.height;
@@ -59,78 +55,32 @@ class _MainScreenState extends State<MainScreen> {
           image: DecorationImage(image: AssetImage('lib/icons/Untitled-1.jpg'), fit: BoxFit.cover),
         ),
         padding: EdgeInsets.only(top: screenHeight / 2 - 180),
-        child: Form(
-          key: _formKey, // Wrap the form with a GlobalKey
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // IP Address Input Field
-              Text('IP Address', style: TextStyle(fontSize: 18)),
-              TextFormField(
-                controller: ip,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter IP Address',
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BottomNavScreen(),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an IP address';
-                  }
-                  return null; // Return null if input is valid
-                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green[100],
+              shadowColor: Colors.lightGreen[200],
+              elevation: 10,
+              minimumSize: Size(200,100),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
               ),
-              SizedBox(height: 16),
-              // Port Number Input Field
-              Text('Port Number', style: TextStyle(fontSize: 18)),
-              TextFormField(
-                controller: port,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter Port Number',
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a port number';
-                  }
-                  return null; // Return null if input is valid
-                },
+            ),
+            child: Text(
+              'Let\'s go',
+              style: TextStyle(
+                fontSize: 20,
+                color: const Color.fromARGB(255, 94, 126, 97),
               ),
-              SizedBox(height: 32),
-              // Submit Button
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // If the form is valid, navigate to the next screen
-                      roboIp = ip.text;
-                      roboPort = port.text;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BottomNavScreen(),
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[100],
-                    shadowColor: Colors.lightGreen[200],
-                    elevation: 10,
-                    minimumSize: Size(200,100),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'Let\'s go',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: const Color.fromARGB(255, 94, 126, 97),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

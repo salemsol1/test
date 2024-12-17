@@ -1,13 +1,18 @@
 // joystick_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:robo_app/buttons.dart';
+import 'package:robo_app/config.dart';
 import 'package:robo_app/main.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
-import 'package:robo_app/misc_controls.dart';
 import 'package:robo_app/speed_slider.dart'; // Import joystick package
 
-class JoystickScreen extends StatelessWidget {
-  const JoystickScreen({super.key});
+class JoystickScreen extends StatefulWidget {
+    @override
+  _JoystickScreenState createState() => _JoystickScreenState();
+}
+class _JoystickScreenState extends State<JoystickScreen> {
+  bool _isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +61,18 @@ class JoystickScreen extends StatelessWidget {
                 Padding (
                   padding: EdgeInsets.only(top: 0, left: screenWidth * 0.1),
                   child: 
-                    CustomControl(
-                      cmd: 'W',
-                      icon: 'lib/icons/car-light.png',
-                    ),
+                    Switch(
+                    value: _isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        _isSwitched = value;
+                      });
+                      print("Switch is ${_isSwitched ? "ON" : "OFF"}");
+                    },
+                    activeColor: Colors.green,
+                    inactiveThumbColor: Colors.red,
+                    inactiveTrackColor: Colors.grey,
+                  ),
                 ),
                 // Joystick widget
                 Padding(
@@ -80,15 +93,16 @@ class JoystickScreen extends StatelessWidget {
                 Padding (
                   padding: EdgeInsets.only(left: screenHeight / 2),
                   child: 
-                    CustomControl(
+                    CustomGestureButton(
                       cmd: 'V',
                       icon: 'lib/icons/horn.png',
+                      sendStop: false,
                     ),
                 ),
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: 15, left: screenWidth / 2 - 150),
+              padding: EdgeInsets.only(top: 5, left: screenWidth / 2 - 140),
                 child: SizedBox(
                   width: screenWidth * 0.3,
                   child: ValueSlider(),
