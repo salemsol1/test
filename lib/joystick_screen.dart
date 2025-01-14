@@ -1,13 +1,16 @@
 // joystick_screen.dart
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:robo_app/buttons.dart';
-import 'package:robo_app/config.dart';
 import 'package:robo_app/main.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
 import 'package:robo_app/speed_slider.dart'; // Import joystick package
 
 class JoystickScreen extends StatefulWidget {
+  const JoystickScreen({super.key});
+
     @override
   _JoystickScreenState createState() => _JoystickScreenState();
 }
@@ -25,9 +28,6 @@ class _JoystickScreenState extends State<JoystickScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      /*appBar: AppBar(
-        title: Text('Joystick Screen'),
-      ),*/
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(image: AssetImage('lib/icons/Untitled-1.jpg'), fit: BoxFit.cover),

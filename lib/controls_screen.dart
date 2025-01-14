@@ -1,10 +1,11 @@
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:robo_app/main.dart';
 import 'joystick_screen.dart'; // Import the second screen
 import 'buttons.dart'; // Import your custom widget
 import 'speed_slider.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});

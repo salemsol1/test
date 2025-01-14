@@ -1,7 +1,10 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import for SystemChrome
 import 'package:robo_app/config.dart';
+import 'package:http/http.dart' as http;
 import 'controls_screen.dart'; // Import the controls screen
 
 // Custom HttpOverrides class to bypass SSL certificate verification
@@ -45,6 +48,36 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+
+  bool isConnected = false; // Tracks whether the connection is established
+  bool isLoading = true; // Tracks whether we're still checking the connection
+
+  @override
+  void initState() {
+    super.initState();
+    checkServerConnection(); // Start checking the server connection on initialization
+  }
+
+  Future<void> checkServerConnection() async {
+    while (!isConnected) {
+      try {
+        final response = await http
+            .get(Uri.parse('http://$roboIp:$roboPort/?State=S')) // Replace with your server URL
+            .timeout(Duration(seconds: 5)); // Timeout after 5 seconds
+
+        if (response.statusCode == 200) {
+          setState(() {
+            isConnected = true; // Connection successful
+          });
+          break; // Exit the loop once connected
+        }
+      } catch (e) {
+        print("Connection failed, retrying..."); // Log failure and retry
+        await Future.delayed(Duration(seconds: 2)); // Wait before retrying
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
   final double screenHeight = MediaQuery.of(context).size.height;
@@ -56,34 +89,34 @@ class _MainScreenState extends State<MainScreen> {
         ),
         padding: EdgeInsets.only(top: screenHeight / 2 - 180),
         child: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BottomNavScreen(),
+          child: isConnected ? 
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green[100],
+                shadowColor: Colors.lightGreen[200],
+                elevation: 10,
+                minimumSize: Size(200,100),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[100],
-              shadowColor: Colors.lightGreen[200],
-              elevation: 10,
-              minimumSize: Size(200,100),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
               ),
-            ),
-            child: Text(
-              'Let\'s go',
-              style: TextStyle(
-                fontSize: 20,
-                color: const Color.fromARGB(255, 94, 126, 97),
-              ),
-            ),
-          ),
+              child: Text(
+                "Let's Go",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: const Color.fromARGB(255, 94, 126, 97),
+                ),
+                ),
+            )
+            : Text("Loading...", style: TextStyle(fontSize: 24, color: const Color.fromARGB(255, 102, 160, 104)),),
         ),
-      ),
+      )
     );
   }
 }

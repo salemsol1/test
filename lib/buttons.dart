@@ -1,7 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'dart:async'; // Import Timer
-import 'package:http/http.dart' as http;
-import 'config.dart';
+import 'package:robo_app/utils.dart';
 
 final ValueNotifier<bool> isUpPressed = ValueNotifier<bool>(false);
 final ValueNotifier<bool> isDownPressed = ValueNotifier<bool>(false);
@@ -71,7 +72,7 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
     _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       currCmd = getCurrCmd(cmd);
 
-      _handleButtonClick(currCmd, false, 1);
+      sendCmdToServer(context: context,cmd: currCmd, retry: 1);
     });
   }
 
@@ -81,29 +82,8 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
       _timer = null;
     }
     setPressedState(cmd, false);
-  }
-
-  Future<void> _handleButtonClick(String cmd, bool sendStop, int retry) async {
-    if (retry > 100) {
-      return;
-    }
-    //currCmd = getCurrCmd(cmd);
-
-    print('$currCmd button clicked');
-    try {
-      final response = await http.get(Uri.parse('http://$roboIp:$roboPort/?State=$currCmd'));
-
-      if (response.statusCode == 200) {
-        if (sendStop) {
-          _handleButtonClick('S', false, 1);
-        }
-        print('sent $currCmd');
-      } else {
-        _handleButtonClick(cmd, sendStop, retry++);
-        print("Failed to send $cmd, try $retry");
-      }
-    } catch (e) {
-        print('Error occurred: $e');
+    if (widget.sendStop) {
+        sendCmdToServer(context: context,cmd: 'S', retry: 1);
     }
   }
 

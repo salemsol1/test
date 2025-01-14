@@ -1,4 +1,3 @@
 library;
-bool _isSwitched = false;
-String roboIp = "192.168.4.1";
+String roboIp = "10.0.0.4";
 String roboPort = "80";
