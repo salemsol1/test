@@ -72,7 +72,7 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
     _timer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       currCmd = getCurrCmd(cmd);
 
-      sendCmdToServer(context: context,cmd: currCmd, retry: 1);
+      sendCmdToServer(context: context,cmd: currCmd);
     });
   }
 
@@ -83,16 +83,18 @@ class _CustomGestureButtonState extends State<CustomGestureButton> {
     }
     setPressedState(cmd, false);
     if (widget.sendStop) {
-        sendCmdToServer(context: context,cmd: 'S', retry: 1);
+        sendCmdToServer(context: context,cmd: 'S');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       //onTap: () => _handleButtonClick(widget.cmd, widget.sendStop, 1),
       onTapDown: (details) => _tapDown(widget.cmd),
       onTapUp: (details) => _tapUp(widget.cmd),
+      onTapCancel: () => _tapUp(widget.cmd),
       child: SizedBox(
         width: 70,
         height: 70,

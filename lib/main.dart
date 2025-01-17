@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import for SystemChrome
 import 'package:robo_app/config.dart';
 import 'package:http/http.dart' as http;
+import 'package:robo_app/internet_connection_manager.dart';
 import 'controls_screen.dart'; // Import the controls screen
 
 // Custom HttpOverrides class to bypass SSL certificate verification
@@ -48,14 +49,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-
+  late InternetConnectionManager connectionManager;
   bool isConnected = false; // Tracks whether the connection is established
   bool isLoading = true; // Tracks whether we're still checking the connection
 
   @override
   void initState() {
     super.initState();
+    connectionManager = InternetConnectionManager(context);
     checkServerConnection(); // Start checking the server connection on initialization
+  }
+  @override
+  void dispose() {
+    connectionManager.dispose(); // Dispose of resources when widget is destroyed
+    super.dispose();
   }
 
   Future<void> checkServerConnection() async {
@@ -85,7 +92,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('lib/icons/Untitled-1.jpg'), fit: BoxFit.cover),
+          image: DecorationImage(image: AssetImage('lib/icons/main.jpg'), fit: BoxFit.cover),
         ),
         padding: EdgeInsets.only(top: screenHeight / 2 - 180),
         child: Center(

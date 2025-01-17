@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:robo_app/main.dart';
+import 'package:robo_app/internet_connection_manager.dart';
+import 'package:robo_app/utils.dart';
 import 'joystick_screen.dart'; // Import the second screen
-import 'buttons.dart'; // Import your custom widget
+import 'buttons.dart'; 
 import 'speed_slider.dart';
 
 class BottomNavScreen extends StatefulWidget {
@@ -71,7 +72,21 @@ class ControlsScreen extends StatefulWidget {
 }
 
 class _ControlsScreen extends State<ControlsScreen> {
+  late InternetConnectionManager connectionManager;
   bool _isSwitched = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    connectionManager = InternetConnectionManager(context);
+  }
+
+  @override
+  void dispose() {
+    connectionManager.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,25 +106,7 @@ class _ControlsScreen extends State<ControlsScreen> {
           mainAxisAlignment: MainAxisAlignment.start, 
           crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
-            // Home Button
-            Padding(
-              padding: const EdgeInsets.only(left: 10, top:30),
-              child: IconButton(
-                icon: Icon(Icons.home, size: 50, color: Colors.blue),
-                onPressed: () {
-                  SystemChrome.setPreferredOrientations([
-                    DeviceOrientation.portraitUp,
-                    DeviceOrientation.portraitDown,
-                  ]).then((_) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => MainScreen()),
-                      (route) => false, // Remove all previous routes from the stack                  
-                    );
-                  });
-                },
-              ),
-            ),
+            SizedBox(height: screenWidth * 0.1),
             Row (
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +115,7 @@ class _ControlsScreen extends State<ControlsScreen> {
                 Column(
                   children: [
                     Padding (
-                      padding: EdgeInsets.only(top: 10, left: screenWidth * 0.08),
+                      padding: EdgeInsets.only(left: screenHeight * 0.15),
                       child: 
                         CustomGestureButton(
                           cmd: 'F',
@@ -126,9 +123,9 @@ class _ControlsScreen extends State<ControlsScreen> {
                           sendStop: true,
                         ),
                     ),
-                    SizedBox(height: 50),
+                    SizedBox(height: screenWidth * 0.06),
                     Padding (
-                      padding: EdgeInsets.only(left: screenWidth * 0.08),
+                      padding: EdgeInsets.only(left: screenHeight * 0.15),
                       child:
                         CustomGestureButton(
                           cmd: 'B',
@@ -139,24 +136,35 @@ class _ControlsScreen extends State<ControlsScreen> {
                   ],
                 ),
                 // Light switch button
-                Padding (
-                  padding: EdgeInsets.only(top: 70, left: screenWidth * 0.05),
-                  child: Switch(
-                    value: _isSwitched,
-                    onChanged: (value) {
-                      setState(() {
-                        _isSwitched = value;
-                      });
-                      print("Switch is ${_isSwitched ? "ON" : "OFF"}");
-                    },
-                    activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
-                    inactiveTrackColor: Colors.grey,
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding (
+                      padding: EdgeInsets.only(top: screenWidth * 0.06, left: screenHeight * 0.09),
+                      child: Icon(_isSwitched ? Icons.light_mode : Icons.light_mode_outlined, color: _isSwitched ? Colors.green : Colors.red),
+                    ),
+                    Padding (
+                      padding: EdgeInsets.only(top:0, left: screenHeight * 0.05),
+                      child: Switch(
+                        value: _isSwitched,
+                        onChanged: (value) {
+                          setState(() {
+                            _isSwitched = value;
+                          });
+                          print("Switch is ${_isSwitched ? "ON" : "OFF"}");
+                          sendCmdToServer(context: context, cmd: _isSwitched ? "W" : "w");
+                        },
+                        activeColor: Colors.green,
+                        inactiveThumbColor: Colors.red,
+                        inactiveTrackColor: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
                 // Speed Slider 
                 Padding (
-                  padding: EdgeInsets.only(top: screenHeight * 0.08, left: screenWidth * 0.02),
+                  padding: EdgeInsets.only(top: screenWidth * 0.15, left: screenHeight * 0.1),
                   child: 
                     SizedBox (
                       width: screenWidth * 0.3,
@@ -167,7 +175,7 @@ class _ControlsScreen extends State<ControlsScreen> {
                   children: [
                     // Horn
                     Padding (
-                      padding: EdgeInsets.only(top: 20, left: screenHeight * 0.15),
+                      padding: EdgeInsets.only(top: screenWidth * 0.03, left: screenHeight * 0.1),
                       child: 
                         CustomGestureButton(
                           cmd: 'V',
@@ -179,7 +187,7 @@ class _ControlsScreen extends State<ControlsScreen> {
                     Row (
                       children: [
                         Padding (
-                          padding: EdgeInsets.only(top: screenHeight * 0.5 - 170, left: screenHeight * 0.15),
+                          padding: EdgeInsets.only(top: screenHeight * 0.5 - 170 , left: screenHeight * 0.1),
                           child: 
                             CustomGestureButton(
                               cmd: 'L',
@@ -187,7 +195,7 @@ class _ControlsScreen extends State<ControlsScreen> {
                               sendStop: true,
                             ),
                         ),
-                        SizedBox(width: 70),
+                        SizedBox(width: screenWidth * 0.06),
                         Padding (
                           padding: EdgeInsets.only(top: screenHeight * 0.5 - 170),
                           child: 

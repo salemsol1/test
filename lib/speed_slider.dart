@@ -14,7 +14,7 @@ class _ValueSliderState extends State<ValueSlider> {
   double _currentValue = 0;
 
   Future<void> _changeSpeed(int speed) async {
-    sendCmdToServer(context: context, cmd: speed.toString(), retry: 1);
+    sendCmdToServer(context: context, cmd: speed.toString());
   }
 
   @override
