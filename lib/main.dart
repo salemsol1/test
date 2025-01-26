@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import for SystemChrome
 import 'package:robo_app/config.dart';
 import 'package:http/http.dart' as http;
-import 'package:robo_app/internet_connection_manager.dart';
 import 'controls_screen.dart'; // Import the controls screen
 
 // Custom HttpOverrides class to bypass SSL certificate verification
@@ -49,19 +48,16 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late InternetConnectionManager connectionManager;
   bool isConnected = false; // Tracks whether the connection is established
-  bool isLoading = true; // Tracks whether we're still checking the connection
 
   @override
   void initState() {
     super.initState();
-    connectionManager = InternetConnectionManager(context);
     checkServerConnection(); // Start checking the server connection on initialization
   }
+  
   @override
   void dispose() {
-    connectionManager.dispose(); // Dispose of resources when widget is destroyed
     super.dispose();
   }
 
@@ -76,7 +72,9 @@ class _MainScreenState extends State<MainScreen> {
           setState(() {
             isConnected = true; // Connection successful
           });
-          break; // Exit the loop once connected
+          Navigator.of(context).pushReplacement(
+           MaterialPageRoute(builder: (context) => BottomNavScreen()),
+          ); // Exit the loop once connected
         }
       } catch (e) {
         print("Connection failed, retrying..."); // Log failure and retry
@@ -96,32 +94,8 @@ class _MainScreenState extends State<MainScreen> {
         ),
         padding: EdgeInsets.only(top: screenHeight / 2 - 180),
         child: Center(
-          child: isConnected ? 
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => BottomNavScreen()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[100],
-                shadowColor: Colors.lightGreen[200],
-                elevation: 10,
-                minimumSize: Size(200,100),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: Text(
-                "Let's Go",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: const Color.fromARGB(255, 94, 126, 97),
-                ),
-                ),
-            )
-            : Text("Loading...", style: TextStyle(fontSize: 24, color: const Color.fromARGB(255, 102, 160, 104)),),
+          child: !isConnected ? Text("Waiting for robot...", style: TextStyle(fontSize: 24, color: const Color.fromARGB(255, 102, 160, 104)),) :
+            Text("Connected!", style: TextStyle(fontSize: 24, color: const Color.fromARGB(255, 102, 160, 104)),),
         ),
       )
     );

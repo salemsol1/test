@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:robo_app/buttons.dart';
 import 'package:flutter_joystick/flutter_joystick.dart';
-import 'package:robo_app/internet_connection_manager.dart';
 import 'package:robo_app/speed_slider.dart';
 import 'package:robo_app/utils.dart';
 
@@ -16,18 +15,15 @@ class JoystickScreen extends StatefulWidget {
   _JoystickScreenState createState() => _JoystickScreenState();
 }
 class _JoystickScreenState extends State<JoystickScreen> {
-  late InternetConnectionManager connectionManager;
   bool _isSwitched = false;
   
   @override
   void initState() {
     super.initState();
-    connectionManager = InternetConnectionManager(context);
   }
 
   @override
   void dispose() {
-    connectionManager.dispose();
     super.dispose();
   }
 

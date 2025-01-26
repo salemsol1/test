@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:robo_app/internet_connection_manager.dart';
 import 'package:robo_app/utils.dart';
 import 'joystick_screen.dart'; // Import the second screen
 import 'buttons.dart'; 
@@ -72,19 +71,16 @@ class ControlsScreen extends StatefulWidget {
 }
 
 class _ControlsScreen extends State<ControlsScreen> {
-  late InternetConnectionManager connectionManager;
   bool _isSwitched = false;
 
 
   @override
   void initState() {
     super.initState();
-    connectionManager = InternetConnectionManager(context);
   }
 
   @override
   void dispose() {
-    connectionManager.dispose();
     super.dispose();
   }
 
